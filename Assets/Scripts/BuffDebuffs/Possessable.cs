@@ -20,8 +20,18 @@ public class Possessable : MonoBehaviour
     private CharacterController characterController;
     private bool isGrounded;
     private float verticalVelocity;
+    private Collider originalCollider;
+    private Vector3 originalCenter;
+    private float originalHeight;
+    private float originalRadius;
 
     private void Awake()
+    {
+        SetupCameraPoint();
+        SetupCharacterController();
+    }
+
+    private void SetupCameraPoint()
     {
         if (fpsCameraPoint == null)
         {
@@ -30,10 +40,38 @@ public class Possessable : MonoBehaviour
             cameraPointObj.transform.localPosition = new Vector3(0, 1.8f, 0);
             fpsCameraPoint = cameraPointObj.transform;
         }
+    }
 
-        characterController = gameObject.AddComponent<CharacterController>();
-        characterController.height = 2f;
-        characterController.radius = 0.5f;
+    private void SetupCharacterController()
+    {
+        // Get the original collider (could be any type)
+        originalCollider = GetComponent<Collider>();
+        if (originalCollider != null)
+        {
+            // Store original collider properties
+            Bounds bounds = originalCollider.bounds;
+            originalCenter = originalCollider.bounds.center - transform.position;
+            originalHeight = bounds.size.y;
+            originalRadius = Mathf.Max(bounds.extents.x, bounds.extents.z);
+
+            // Add CharacterController with dimensions based on the original collider
+            characterController = gameObject.AddComponent<CharacterController>();
+            characterController.height = originalHeight;
+            characterController.radius = originalRadius;
+            characterController.center = originalCenter;
+            
+            // Disable the original collider while possessed
+            originalCollider.enabled = false;
+        }
+        else
+        {
+            // If no collider exists, create a CharacterController with default dimensions
+            characterController = gameObject.AddComponent<CharacterController>();
+            characterController.height = 2f;
+            characterController.radius = 0.5f;
+            characterController.center = Vector3.up;
+            Debug.LogWarning($"No collider found on {gameObject.name}. Using default CharacterController dimensions.");
+        }
 
         // Disable any existing Rigidbody
         Rigidbody rb = GetComponent<Rigidbody>();
@@ -52,6 +90,8 @@ public class Possessable : MonoBehaviour
 
     public void HandleMovement(Vector2 moveInput, Vector2 lookInput)
     {
+        if (characterController == null) return;
+
         // Handle looking up/down (pitch) - this only affects the camera point
         _cinemachineTargetPitch = Mathf.Clamp(_cinemachineTargetPitch - (lookInput.y * rotationSpeed), -89f, 89f);
         fpsCameraPoint.localRotation = Quaternion.Euler(_cinemachineTargetPitch, 0, 0);
@@ -70,17 +110,15 @@ public class Possessable : MonoBehaviour
             verticalVelocity += gravity * Time.deltaTime;
         }
 
-        // Get camera's forward and right vectors, but ignore vertical component
+        // Calculate movement direction relative to camera orientation
         Vector3 cameraForward = Camera.main.transform.forward;
         Vector3 cameraRight = Camera.main.transform.right;
         
-        // Project vectors onto the horizontal plane
         cameraForward.y = 0;
         cameraRight.y = 0;
         cameraForward.Normalize();
         cameraRight.Normalize();
 
-        // Calculate movement direction relative to camera orientation
         Vector3 moveDirection = (cameraForward * moveInput.y + cameraRight * moveInput.x);
         
         // Apply movement and gravity
@@ -92,6 +130,12 @@ public class Possessable : MonoBehaviour
 
     void OnDisable()
     {
+        // Restore original collider when possession ends
+        if(originalCollider != null)
+        {
+            originalCollider.enabled = true;
+        }
+        
         if (characterController != null)
         {
             Destroy(characterController);

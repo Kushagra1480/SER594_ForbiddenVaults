@@ -73,14 +73,24 @@ namespace StarterAssets
                 Debug.Log($"F pressed. Has buff: {_hasPossessionBuff}, Is possessing: {_isPossessing}");
             }
 
-            if (_isPossessing)
+            // Check for early exit from possession
+            if (_isPossessing && Input.GetKeyDown(possessionKey))
             {
-                UpdatePossession();
+                if (debugMode) Debug.Log("Ending possession early");
+                EndPossession();
+                return;
             }
-            else if (_hasPossessionBuff && Input.GetKeyDown(possessionKey))
+
+            // If not possessing, try to start possession
+            if (!_isPossessing && _hasPossessionBuff && Input.GetKeyDown(possessionKey))
             {
                 if (debugMode) Debug.Log("Attempting possession...");
                 TryPossessObject();
+            }
+
+            if (_isPossessing)
+            {
+                UpdatePossession();
             }
 
             UpdateTimer();
