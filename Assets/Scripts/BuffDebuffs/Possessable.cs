@@ -5,7 +5,7 @@ public class Possessable : MonoBehaviour
 {
     [Header("Possession Settings")]
     public float moveSpeed = 4.0f;
-    public float rotationSpeed = 0.5f;
+    public float rotationSpeed = 1.0f;
     
     [Header("First Person Settings")]
     public Transform fpsCameraPoint;
@@ -17,29 +17,26 @@ public class Possessable : MonoBehaviour
     public float groundedRadius = 0.5f;
     public LayerMask groundLayers;
     
-    private Rigidbody rb;
+    private CharacterController characterController;
     private bool isGrounded;
     private float verticalVelocity;
-    private CharacterController characterController;
 
     private void Awake()
     {
-        rb = GetComponent<Rigidbody>();
-        
-        // Add CharacterController if it doesn't exist
-        characterController = gameObject.AddComponent<CharacterController>();
-        characterController.height = 2f;
-        characterController.radius = 0.5f;
-        
         if (fpsCameraPoint == null)
         {
             GameObject cameraPointObj = new GameObject("FPSCameraPoint");
             cameraPointObj.transform.SetParent(transform);
-            cameraPointObj.transform.localPosition = new Vector3(0, 0.8f, 0);
+            cameraPointObj.transform.localPosition = new Vector3(0, 1.8f, 0);
             fpsCameraPoint = cameraPointObj.transform;
         }
 
-        // Disable Rigidbody and use CharacterController instead
+        characterController = gameObject.AddComponent<CharacterController>();
+        characterController.height = 2f;
+        characterController.radius = 0.5f;
+
+        // Disable any existing Rigidbody
+        Rigidbody rb = GetComponent<Rigidbody>();
         if (rb != null)
         {
             rb.isKinematic = true;
@@ -55,20 +52,15 @@ public class Possessable : MonoBehaviour
 
     public void HandleMovement(Vector2 moveInput, Vector2 lookInput)
     {
-        GroundedCheck();
-
-        // Camera rotation
-        _cinemachineTargetPitch += lookInput.y * rotationSpeed;
-        _cinemachineTargetPitch = Mathf.Clamp(_cinemachineTargetPitch, -90f, 90f);
+        // Handle looking up/down (pitch) - this only affects the camera point
+        _cinemachineTargetPitch = Mathf.Clamp(_cinemachineTargetPitch - (lookInput.y * rotationSpeed), -89f, 89f);
         fpsCameraPoint.localRotation = Quaternion.Euler(_cinemachineTargetPitch, 0, 0);
         
-        // Object rotation
-        transform.Rotate(Vector3.up * lookInput.x * rotationSpeed);
+        // Handle looking left/right (yaw) - this rotates the entire object
+        transform.Rotate(Vector3.up * (lookInput.x * rotationSpeed));
 
-        // Calculate movement direction
-        Vector3 moveDirection = transform.right * moveInput.x + transform.forward * moveInput.y;
-
-        // Handle gravity
+        // Ground check and gravity
+        GroundedCheck();
         if (isGrounded && verticalVelocity < 0)
         {
             verticalVelocity = -2f;
@@ -78,7 +70,20 @@ public class Possessable : MonoBehaviour
             verticalVelocity += gravity * Time.deltaTime;
         }
 
-        // Apply movement using CharacterController
+        // Get camera's forward and right vectors, but ignore vertical component
+        Vector3 cameraForward = Camera.main.transform.forward;
+        Vector3 cameraRight = Camera.main.transform.right;
+        
+        // Project vectors onto the horizontal plane
+        cameraForward.y = 0;
+        cameraRight.y = 0;
+        cameraForward.Normalize();
+        cameraRight.Normalize();
+
+        // Calculate movement direction relative to camera orientation
+        Vector3 moveDirection = (cameraForward * moveInput.y + cameraRight * moveInput.x);
+        
+        // Apply movement and gravity
         Vector3 movement = moveDirection.normalized * moveSpeed;
         movement.y = verticalVelocity;
         
@@ -87,7 +92,6 @@ public class Possessable : MonoBehaviour
 
     void OnDisable()
     {
-        // Clean up when possession ends
         if (characterController != null)
         {
             Destroy(characterController);

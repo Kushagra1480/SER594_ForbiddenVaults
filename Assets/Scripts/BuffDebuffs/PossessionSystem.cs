@@ -16,7 +16,6 @@ namespace StarterAssets
         [Header("Debug")]
         public bool debugMode = true;
 
-        // References
         private FirstPersonController _controller;
         private StarterAssetsInputs _input;
         private GameObject _originalPlayer;
@@ -24,13 +23,9 @@ namespace StarterAssets
         private Transform _originalCameraTarget;
         private Vector3 _originalPlayerPosition;
         private Quaternion _originalPlayerRotation;
-
-        // State
         private bool _isPossessing;
         private bool _hasPossessionBuff;
         private float _possessionTimer;
-
-        // UI
         private GUIStyle _uiStyle;
 
         private void Awake()
@@ -47,27 +42,13 @@ namespace StarterAssets
 
             if (playerCamera == null)
             {
-                var vCam = GameObject.Find("PlayerFollowCamera")?.GetComponent<CinemachineVirtualCamera>();
-                if (vCam != null)
-                {
-                    playerCamera = vCam;
-                    Debug.Log("Found PlayerFollowCamera");
-                }
-                else
-                {
-                    vCam = FindObjectOfType<CinemachineVirtualCamera>();
-                    if (vCam != null)
-                    {
-                        playerCamera = vCam;
-                        Debug.Log("Found CinemachineVirtualCamera");
-                    }
-                }
+                playerCamera = FindObjectOfType<CinemachineVirtualCamera>();
             }
 
             if (playerCamera != null)
             {
                 _originalCameraTarget = playerCamera.Follow;
-                Debug.Log("Camera reference found");
+                if (debugMode) Debug.Log("Camera reference found");
             }
             else
             {
@@ -203,8 +184,26 @@ namespace StarterAssets
             // Update camera
             if (playerCamera != null)
             {
+                // Only set Follow, remove LookAt
                 playerCamera.Follow = target.fpsCameraPoint;
-                playerCamera.LookAt = target.fpsCameraPoint;
+                playerCamera.LookAt = null;
+                
+                // Set the camera to use POV mode
+                var composer = playerCamera.GetCinemachineComponent<CinemachineComposer>();
+                if (composer != null)
+                {
+                    DestroyImmediate(composer);
+                }
+                
+                var pov = playerCamera.GetCinemachineComponent<CinemachinePOV>();
+                if (pov == null)
+                {
+                    pov = playerCamera.AddCinemachineComponent<CinemachinePOV>();
+                }
+                
+                // Reset POV settings
+                pov.m_VerticalAxis.Value = 0;
+                pov.m_HorizontalAxis.Value = 0;
             }
 
             // Hide possessed object mesh (optional)
@@ -235,26 +234,35 @@ namespace StarterAssets
             // Restore player position and control
             transform.position = _originalPlayerPosition;
             transform.rotation = _originalPlayerRotation;
-            _controller.enabled = true;
+            if (_controller != null)
+            {
+                _controller.enabled = true;
+            }
 
             // Reset camera
             if (playerCamera != null)
             {
                 playerCamera.Follow = _originalCameraTarget;
                 playerCamera.LookAt = _originalCameraTarget;
+                
+                // Remove POV and restore original behavior
+                var pov = playerCamera.GetCinemachineComponent<CinemachinePOV>();
+                if (pov != null)
+                {
+                    DestroyImmediate(pov);
+                }
             }
 
             // Reset possessed object
             if (_possessedObject != null)
             {
-                // Show mesh again
                 var renderers = _possessedObject.GetComponentsInChildren<Renderer>();
                 foreach (var renderer in renderers)
                 {
                     renderer.enabled = true;
                 }
+                _possessedObject = null;
             }
-            _possessedObject = null;
         }
 
         public float GetPossessionTimeRemaining() => _possessionTimer;
