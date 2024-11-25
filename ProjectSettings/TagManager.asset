@@ -7,6 +7,7 @@ TagManager:
   - Item
   - CinemachineTarget
   - Piano
+  - Powerup
   layers:
   - Default
   - TransparentFX
