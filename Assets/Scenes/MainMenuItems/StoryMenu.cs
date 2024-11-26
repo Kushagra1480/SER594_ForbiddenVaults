@@ -15,10 +15,4 @@ public class StoryMenu : MonoBehaviour
         SceneManager.LoadScene("MainMenuScene");
     }
 
-    public void ReturnToMenu()
-    {
-        SceneManager.LoadScene("MainMenuScene");
-    }
-
-
 }

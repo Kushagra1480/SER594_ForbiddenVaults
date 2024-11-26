@@ -50,6 +50,7 @@ namespace StarterAssets
 		public float TopClamp = 90.0f;
 		[Tooltip("How far in degrees can you move the camera down")]
 		public float BottomClamp = -90.0f;
+		private bool canRotate = true;  
 
 		// cinemachine
 		private float _cinemachineTargetPitch;
@@ -95,6 +96,10 @@ namespace StarterAssets
 			}
 		}
 
+		public void SetRotation(bool locked) {
+        canRotate = !locked;
+    }
+
 		private void Start()
 		{
 			_controller = GetComponent<CharacterController>();
@@ -110,8 +115,10 @@ namespace StarterAssets
 			_fallTimeoutDelta = FallTimeout;
 		}
 
-		private void Update()
-		{
+		private void Update() {
+			if (!_controller.enabled) {
+				return;
+			}
 			JumpAndGravity();
 			GroundedCheck();
 			Move();
@@ -119,6 +126,7 @@ namespace StarterAssets
 
 		private void LateUpdate()
 		{
+			if (!canRotate) return;
 			CameraRotation();
 		}
 
@@ -151,8 +159,10 @@ namespace StarterAssets
 			}
 		}
 
-		private void Move()
-		{
+		private void Move() {
+			if (!_controller.enabled) {
+				return;
+			}
 			// set target speed based on move speed, sprint speed and if sprint is pressed
 			float targetSpeed = _input.sprint ? SprintSpeed : MoveSpeed;
 

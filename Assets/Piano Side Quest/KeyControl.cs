@@ -25,9 +25,6 @@ public class KeyControl : MonoBehaviour
     [SerializeField] GameObject prizeClaimText;
     [SerializeField] GameObject PianoUI;
     [SerializeField] GameObject PlayPianoText;
-    [SerializeField] GameObject PowerUp;
-    [SerializeField] GameObject PlayTune;
-
     int randomIndex;
     int i;
     
@@ -37,7 +34,7 @@ public class KeyControl : MonoBehaviour
         new List<string> { "C", "D", "E", "F" },
         new List<string> { "F", "E", "D", "C" },
         new List<string> { "C", "E", "D", "F" },
-        //new List<string> { "F", "C", "E", "D" }
+        new List<string> { "F", "C", "E", "D" }
     };
 
     private List<string> correctSequence; // The selected correct sequence
@@ -175,7 +172,6 @@ public class KeyControl : MonoBehaviour
         if (playerInput.Count == correctSequence.Count)
         {
             Debug.Log("Correct sequence! Puzzle solved!");
-            PlayTune.SetActive(false);
             StartCoroutine(ShowCorrectMessage());
         }
     }
@@ -200,7 +196,6 @@ public class KeyControl : MonoBehaviour
         // Add behavior for when the puzzle is solved, e.g., unlocking a door
         correctAudioText.SetActive(false);
         prizeClaimText.SetActive(true);
-        PowerUp.SetActive(true);
         Debug.Log("The piano opens a secret compartment!");
         // Example: Unlock a reward object or play a success animation
     }
