@@ -3054,7 +3054,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.04, y: 0.02, z: -0.32}
+  m_Size: {x: 0.04, y: 0.02, z: 0.2}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &309202721
 GameObject:
@@ -5068,11 +5068,11 @@ Transform:
   m_GameObject: {fileID: 574562209}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -960, y: -540, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1069694874}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &574562211
 MonoBehaviour:
@@ -6251,7 +6251,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.04, y: 0.02, z: -0.29}
+  m_Size: {x: 0.04, y: 0.02, z: 0.2}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &682959892
 PrefabInstance:
@@ -9128,16 +9128,16 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 981646124}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1069694874}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 960, y: 540}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &981646126
@@ -9717,10 +9717,8 @@ RectTransform:
   - {fileID: 1150454444}
   - {fileID: 1924260027}
   - {fileID: 1298188551}
-  - {fileID: 981646125}
   - {fileID: 679840544}
   - {fileID: 852153547}
-  - {fileID: 574562210}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -11494,7 +11492,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.04, y: 0.02, z: -0.26}
+  m_Size: {x: 0.04, y: 0.02, z: 0.2}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1344902883
 GameObject:
@@ -14238,7 +14236,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.04, y: 0.02, z: -0.3}
+  m_Size: {x: 0.04, y: 0.02, z: 0.2}
   m_Center: {x: 0, y: 0, z: -0.05}
 --- !u!1001 &1687441028
 PrefabInstance:
@@ -18476,6 +18474,8 @@ SceneRoots:
   - {fileID: 1069694874}
   - {fileID: 1383837275}
   - {fileID: 908934350}
+  - {fileID: 574562210}
+  - {fileID: 981646125}
   - {fileID: 407849521}
   - {fileID: 1244444749}
   - {fileID: 140515560}

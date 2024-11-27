@@ -18,9 +18,9 @@ EditorBuildSettings:
     path: Assets/Scenes/SettingsScene.unity
     guid: aa4c34ade87b0c441a7c9e60299e1121
   - enabled: 1
-    path: Assets/Room/scenes/the last revelation.unity
-    guid: fffc368ce7c545240a157d1fa3ce0e97
-  - enabled: 1
     path: Assets/Scenes/GameCompleteScene.unity
     guid: 27cddd5984c4df64490318eeb95c1e3c
+  - enabled: 1
+    path: Assets/Scenes/the last revelation.unity
+    guid: 91d41fa7471a16a458a209834a6546b2
   m_configObjects: {}
