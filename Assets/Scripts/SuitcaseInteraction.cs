@@ -9,24 +9,18 @@ public class SuitcaseInteraction : InteractableObject
     [SerializeField] private string requiredItemID = "Key";
     [SerializeField] private AudioSource unlockSound;
     [SerializeField] private Animator suitcaseAnimator;
-
     [SerializeField] private Sprite electronicComponentSprite;
 
-    [Header("UI - Unlock Message")]
-    [SerializeField] private GameObject unlockMessagePanel;
-    [SerializeField] private TextMeshProUGUI unlockMessageText;
-
-    [Header("UI - Item Message")]
-    [SerializeField] private GameObject itemMessagePanel;
-    [SerializeField] private TextMeshProUGUI itemMessageText;
+    [Header("UI")]
+    [SerializeField] private GameObject messagePanel;
+    [SerializeField] private TextMeshProUGUI messageText;
 
     [Header("Player References")]
     [SerializeField] private CharacterController playerController;
     [SerializeField] private FirstPersonController fpsController;
 
     private bool isUnlocked = false;
-    private bool isShowingUnlockMessage = false;
-    private bool isShowingItemMessage = false;
+    private bool isShowingMessage = false;
 
     private void Start()
     {
@@ -37,40 +31,28 @@ public class SuitcaseInteraction : InteractableObject
         if (fpsController == null)
             fpsController = GameObject.FindGameObjectWithTag("Player").GetComponent<FirstPersonController>();
             
-        // Hide message panels at start
-        if (unlockMessagePanel != null)
-            unlockMessagePanel.SetActive(false);
-        if (itemMessagePanel != null)
-            itemMessagePanel.SetActive(false);
+        if (messagePanel != null)
+            messagePanel.SetActive(false);
     }
 
     protected override void Update()
     {
-        // Only check for base interactions if no messages are showing
-        if (!isShowingUnlockMessage && !isShowingItemMessage) {
+        if (!isShowingMessage) {
             base.Update();
         }
-        // Check for message dismissal
-        if (Input.GetKeyDown(KeyCode.E)) {
-            if (isShowingUnlockMessage) {
-                HideUnlockMessage();
-            }
-            else if (isShowingItemMessage) {
-                HideItemMessage();
-            }
+        else if (Input.GetKeyDown(KeyCode.E)) {
+            HideMessage();
         }
     }
 
     protected override void OnInteract()
     {
         if (!isUnlocked) {
-            if (InventoryManager.Instance.HasItem(requiredItemID))
-            {
+            if (InventoryManager.Instance.HasItem(requiredItemID)) {
                 UnlockSuitcase();
             }
-            else
-            {
-                ShowUnlockMessage("The key fits perfectly. The lock's tumblers click into place...");
+            else {
+                ShowMessage("A sturdy metal suitcase with a complex locking mechanism");
             }
         }
     }
@@ -85,129 +67,79 @@ public class SuitcaseInteraction : InteractableObject
         if (suitcaseAnimator != null)
             suitcaseAnimator.SetTrigger("Open");
 
-        if (interactionPrompt != null)
-            interactionPrompt.SetActive(false);
-
         StartCoroutine(UnlockSequence());
     }
 
     private IEnumerator UnlockSequence()
     {
-        // Ensure interaction prompt is hidden
-        if (interactionPrompt != null)
-            interactionPrompt.SetActive(false);
-
         // First message
-        ShowUnlockMessage("The key fits perfectly. The lock's tumblers click into place...");
+        ShowMessage("The key fits perfectly. The lock's tumblers click into place...");
         
-        // Wait for player to dismiss unlock message
+        // Wait for player to dismiss
         yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.E));
-        HideUnlockMessage();
+        HideMessage();
         
-        // Small delay between messages
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(1f);
         
         // Second message
-        ShowItemMessage("Beneath layers of protective padding, you discover an electronic component");
+        ShowMessage("Beneath layers of protective padding, you discover an electronic component");
         InventoryManager.Instance.RemoveItem(requiredItemID);
         InventoryManager.Instance.AddItem("5", "ElectricalComponent", electronicComponentSprite);
         
-        // Wait for player to dismiss item message
+        // Wait for player to dismiss
         yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.E));
-        HideItemMessage();
+        HideMessage();
         
         // Disable further interaction
         this.enabled = false;
-        if (interactionPrompt != null)
-            interactionPrompt.SetActive(false);
     }
 
-    private void ShowUnlockMessage(string message)
+    private void ShowMessage(string message)
     {
-        isShowingUnlockMessage = true;
-        DisablePlayerControls();
+        isShowingMessage = true;
         
-        // Hide interaction prompt when showing any message
         if (interactionPrompt != null)
             interactionPrompt.SetActive(false);
-
-        if (unlockMessagePanel != null && unlockMessageText != null)
-        {
-            unlockMessageText.text = message;
-            unlockMessagePanel.SetActive(true);
-        }
-    }
-
-    private void ShowItemMessage(string message)
-    {
-        isShowingItemMessage = true;
-        DisablePlayerControls();
-        
-        // Hide interaction prompt when showing any message
-        if (interactionPrompt != null)
-            interactionPrompt.SetActive(false);
-
-        if (itemMessagePanel != null && itemMessageText != null)
-        {
-            itemMessageText.text = message;
-            itemMessagePanel.SetActive(true);
-        }
-    }
-
-    private void HideUnlockMessage()
-    {
-        isShowingUnlockMessage = false;
-        if (!isShowingItemMessage) 
-        {
-            EnablePlayerControls();
-            // Only show interaction prompt if we're not unlocked yet
-            if (!isUnlocked && interactionPrompt != null)
-                interactionPrompt.SetActive(true);
-        }
-
-        if (unlockMessagePanel != null)
-            unlockMessagePanel.SetActive(false);
-    }
-
-    private void HideItemMessage()
-    {
-        isShowingItemMessage = false;
-        if (!isShowingUnlockMessage) 
-        {
-            EnablePlayerControls();
-            // Don't re-enable interaction prompt after item message
-        }
-
-        if (itemMessagePanel != null)
-            itemMessagePanel.SetActive(false);
-    }
-
-    private void DisablePlayerControls()
-    {
+            
         if (playerController != null)
             playerController.enabled = false;
         if (fpsController != null)
             fpsController.enabled = false;
+
+        if (messagePanel != null && messageText != null)
+        {
+            messageText.text = message;
+            messagePanel.SetActive(true);
+        }
     }
 
-    private void EnablePlayerControls()
+    private void HideMessage()
     {
+        isShowingMessage = false;
+        
         if (playerController != null)
             playerController.enabled = true;
         if (fpsController != null)
             fpsController.enabled = true;
+
+        if (messagePanel != null)
+            messagePanel.SetActive(false);
+            
+        // Only show interaction prompt if not unlocked
+        if (!isUnlocked && interactionPrompt != null)
+            interactionPrompt.SetActive(playerInRange);
     }
 
     private void OnDisable()
     {
-        // Ensure everything is cleaned up when disabled
         if (interactionPrompt != null)
             interactionPrompt.SetActive(false);
-        if (unlockMessagePanel != null)
-            unlockMessagePanel.SetActive(false);
-        if (itemMessagePanel != null)
-            itemMessagePanel.SetActive(false);
+        if (messagePanel != null)
+            messagePanel.SetActive(false);
             
-        EnablePlayerControls();
+        if (playerController != null)
+            playerController.enabled = true;
+        if (fpsController != null)
+            fpsController.enabled = true;
     }
 }

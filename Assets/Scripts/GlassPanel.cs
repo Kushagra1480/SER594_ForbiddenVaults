@@ -67,6 +67,8 @@ public class GlassPanel : InteractableObject
 
         if (!isBroken)
         {
+            if (interactionPrompt != null)
+                interactionPrompt.SetActive(false);
             if (InventoryManager.Instance.HasItem(requiredItemID))
             {
                 ShowConfirmation("Break this glass?");
