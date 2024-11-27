@@ -16,4 +16,8 @@ public class ChangeSceneOnTrigger : MonoBehaviour
             SceneManager.LoadScene(sceneName);
         }
     }
+    private void OnCollisionEnter(Collision collision)
+    {
+        SceneManager.LoadScene(sceneName);
+    }
 }
