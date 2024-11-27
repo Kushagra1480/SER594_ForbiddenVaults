@@ -7,7 +7,7 @@ public class StoryMenu : MonoBehaviour
 {
     public void PlayGame()
     {
-        SceneManager.LoadScene("LevelZeroScene");
+        SceneManager.LoadScene("Maze1");
     }
 
     public void QuitGame()

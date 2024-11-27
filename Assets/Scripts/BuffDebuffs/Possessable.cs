@@ -46,7 +46,7 @@ public class Possessable : MonoBehaviour
     {
         // Get the original collider (could be any type)
         originalCollider = GetComponent<Collider>();
-        if (originalCollider != null)
+        /*if (originalCollider != null)
         {
             // Store original collider properties
             Bounds bounds = originalCollider.bounds;
@@ -61,9 +61,9 @@ public class Possessable : MonoBehaviour
             characterController.center = originalCenter;
             
             // Disable the original collider while possessed
-            originalCollider.enabled = false;
-        }
-        else
+            //originalCollider.enabled = false;
+        }*/
+        //else
         {
             // If no collider exists, create a CharacterController with default dimensions
             characterController = gameObject.AddComponent<CharacterController>();

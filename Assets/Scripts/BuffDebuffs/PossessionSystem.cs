@@ -25,7 +25,7 @@ namespace StarterAssets
         private Quaternion _originalPlayerRotation;
         private bool _isPossessing;
         private bool _hasPossessionBuff;
-        private float _possessionTimer;
+        public float _possessionTimer;
         private GUIStyle _uiStyle;
 
         private void Awake()

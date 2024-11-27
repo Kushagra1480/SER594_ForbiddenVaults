@@ -8,6 +8,7 @@ TagManager:
   - CinemachineTarget
   - Piano
   - Powerup
+  - Lava
   layers:
   - Default
   - TransparentFX

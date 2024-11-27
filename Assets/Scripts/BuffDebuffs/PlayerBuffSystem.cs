@@ -24,8 +24,8 @@ namespace StarterAssets
         private BasicRigidBodyPush _rigidBodyPush;
 
         // Buff timers
-        private float _speedJumpBuffTimer;
-        private float _strengthBuffTimer;
+        public float _speedJumpBuffTimer;
+        public float _strengthBuffTimer;
 
         // Original values
         private float _originalMoveSpeed;
