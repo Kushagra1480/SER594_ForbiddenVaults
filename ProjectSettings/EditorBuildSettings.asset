@@ -9,9 +9,6 @@ EditorBuildSettings:
     path: Assets/Scenes/MainMenuScene.unity
     guid: c36afdc395f3140f8a6415986a85892f
   - enabled: 1
-    path: Assets/Scenes/Maze1.unity
-    guid: 9dfce74de11fef845a15605a76a9934f
-  - enabled: 1
     path: Assets/Scenes/StoryScene.unity
     guid: 25b6378da3641e74d880e0cf1d783dd4
   - enabled: 1
@@ -23,4 +20,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/the last revelation.unity
     guid: 91d41fa7471a16a458a209834a6546b2
+  - enabled: 1
+    path: Assets/Scenes/Maze1.unity
+    guid: 9dfce74de11fef845a15605a76a9934f
   m_configObjects: {}
